@@ -1,0 +1,31 @@
+﻿name: "기능"
+description: "신규 기능 제안"
+title: "[FEAT] "
+labels: ["feat"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: "기능 요약"
+      description: "무엇을 추가하나요?"
+      placeholder: "... 기능 추가"
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "필요성"
+      description: "왜 필요한가요?"
+      placeholder: "사용자에게 ..."
+  - type: textarea
+    id: scope
+    attributes:
+      label: "범위"
+      description: "포함/제외 범위"
+      placeholder: "포함: ... / 제외: ..."
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "수용 기준"
+      description: "완료 기준"
+      value: "- [ ] ..."

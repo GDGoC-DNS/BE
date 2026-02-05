@@ -1,0 +1,40 @@
+﻿name: "버그"
+description: "버그 리포트"
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: "요약"
+      description: "간단히 버그를 설명해 주세요"
+      placeholder: "... 할 때 ...가 발생"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "재현 절차"
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "기대 동작"
+      placeholder: "정상 동작은 ..."
+  - type: textarea
+    id: actual
+    attributes:
+      label: "실제 동작"
+      placeholder: "실제는 ..."
+  - type: textarea
+    id: env
+    attributes:
+      label: "환경"
+      placeholder: "OS, 브라우저, 디바이스, 버전"
+  - type: textarea
+    id: logs
+    attributes:
+      label: "로그/스크린샷"
+      description: "관련 로그나 스크린샷을 첨부하세요"
