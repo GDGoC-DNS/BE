@@ -1,6 +1,6 @@
 ﻿---
-name: "버그 (Legacy)"
-about: "버그 리포트"
+name: "Bug Report / Defect (Legacy)"
+about: "Report a defect or regression"
 title: "[BUG] "
 labels: "bug"
 ---

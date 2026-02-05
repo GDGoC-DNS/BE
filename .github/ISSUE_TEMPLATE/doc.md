@@ -1,6 +1,6 @@
 ﻿---
-name: "문서 (Legacy)"
-about: "문서 변경"
+name: "Documentation Change / Update (Legacy)"
+about: "Docs updates and improvements"
 title: "[DOC] "
 labels: "doc"
 ---

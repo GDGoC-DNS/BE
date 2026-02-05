@@ -1,6 +1,6 @@
 ﻿---
-name: "기능 (Legacy)"
-about: "신규 기능 제안"
+name: "Feature Proposal / Enhancement (Legacy)"
+about: "Suggest a new feature or improvement"
 title: "[FEAT] "
 labels: "feat"
 ---

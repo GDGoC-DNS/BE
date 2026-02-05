@@ -11,13 +11,16 @@
 - type: `feat`, `fix`, `doc`, `refactor`, `chore`, `test`
 - 예시: `feat: 사용자 조회 API 추가`
 
-## 이슈
-- 템플릿 사용을 원칙으로 합니다.
+## 이슈 템플릿
+- 위치: `.github/ISSUE_TEMPLATE/`
+- 형식: `*.md` (레거시 템플릿)
 - 제목 접두사: `[FEAT] [BUG] [DOC] [TASK]` 등
+- 기본 브랜치에만 적용됨(현재 `develop`).
 
-## PR
+## PR 템플릿
+- 위치: `.github/PULL_REQUEST_TEMPLATE.md`
 - 제목 접두사 필수: `[FEAT] [FIX] [DOC] [REFACTOR] [CHORE] [TASK] [BUG]`
-- PR 본문은 템플릿에 따라 작성합니다.
+- PR 본문은 템플릿에 따라 작성
 
 ## 테스트
 - 가능한 로컬 테스트 수행 후 체크합니다.

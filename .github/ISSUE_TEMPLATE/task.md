@@ -1,6 +1,6 @@
 ﻿---
-name: "작업 (Legacy)"
-about: "일반 작업"
+name: "Task / General Work Item (Legacy)"
+about: "General tasks and maintenance items"
 title: "[TASK] "
 labels: "task"
 ---
