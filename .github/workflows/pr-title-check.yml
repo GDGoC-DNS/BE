@@ -1,0 +1,19 @@
+﻿name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title prefix
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const ok = /^\[(FEAT|FIX|DOC|REFACTOR|CHORE|TASK|BUG)\]\s/.test(title);
+            if (!ok) {
+              core.setFailed(`PR 제목은 [FEAT]/[FIX]/[DOC]/[REFACTOR]/[CHORE]/[TASK]/[BUG] 형식으로 시작해야 합니다. 현재: "${title}"`);
+            }
