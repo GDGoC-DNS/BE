@@ -1,6 +1,5 @@
 package com.example.gdg.entity;
 
-import com.example.gdg.type.ActionType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

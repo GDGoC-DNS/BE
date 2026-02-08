@@ -1,6 +1,6 @@
 package com.example.gdg.dto.req;
 
-import com.example.gdg.type.DnsType;
+import com.example.gdg.entity.DnsType;
 import lombok.Data;
 
 @Data

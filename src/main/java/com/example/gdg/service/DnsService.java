@@ -3,7 +3,7 @@ package com.example.gdg.service;
 import com.example.gdg.dto.req.DnsRecordReq;
 import com.example.gdg.entity.*;
 import com.example.gdg.repository.*;
-import com.example.gdg.type.ActionType;
+import com.example.gdg.entity.ActionType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

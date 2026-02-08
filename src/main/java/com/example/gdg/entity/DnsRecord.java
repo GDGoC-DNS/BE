@@ -1,6 +1,5 @@
 package com.example.gdg.entity;
 
-import com.example.gdg.type.DnsType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

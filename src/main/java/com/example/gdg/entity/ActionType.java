@@ -1,4 +1,4 @@
-package com.example.gdg.type;
+package com.example.gdg.entity;
 
 public enum ActionType {
     CREATE, UPDATE, DELETE
