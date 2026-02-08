@@ -1,0 +1,18 @@
+package com.example.gdg.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SwaggerConfig {
+    @Bean
+    public OpenAPI openAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("GDG DNS Service")
+                        .description("Cloudflare 연동 DNS 서브도메인 관리 API")
+                        .version("1.0.0"));
+    }
+}
