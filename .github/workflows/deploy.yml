@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Deploy to ECR and EC2
 
 
 
@@ -50,7 +50,7 @@ jobs:
 
 
 
-    - name: AWS 자격 증명 설정
+    - name: AWS 자격 증명 설정 (ECR 업로드용)
 
       uses: aws-actions/configure-aws-credentials@v2
 
@@ -78,7 +78,7 @@ jobs:
 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
-        ECR_REPOSITORY: hufs-dns-server 
+        ECR_REPOSITORY: hufs-dns-server
 
         IMAGE_TAG: latest
 
@@ -87,3 +87,51 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+
+    # 자동 배포' 단계
+
+    - name: EC2에 배포 (SSH 접속)
+
+      uses: appleboy/ssh-action@master
+
+      with:
+
+        host: ${{ secrets.EC2_HOST }}     
+
+        username: ubuntu                  
+
+        key: ${{ secrets.EC2_SSH_KEY }}    
+
+        script: |
+
+          # 1. AWS ECR 로그인 (토큰 갱신)
+
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com
+
+          
+
+          # 2. 최신 이미지 받기
+
+          docker pull 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
+
+          
+
+          # 3. 기존 컨테이너 멈추고 삭제 (에러 무시)
+
+          docker stop my-server || true
+
+          docker rm my-server || true
+
+          
+
+          # 4. 새 컨테이너 실행
+
+          docker run -d -p 8080:8080 --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
+
+          
+
+          # 5. 안 쓰는 구버전 이미지 정리 (용량 절약)
+
+          docker image prune -f
