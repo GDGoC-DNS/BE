@@ -1,8 +1,8 @@
-package com.example.gdg.service;
+package com.example.gdg.domain.provider.cloudflare.client;
 
-import com.example.gdg.dto.req.CloudflareDnsReq;
-import com.example.gdg.dto.res.CloudflareDnsRes;
-import com.example.gdg.entity.DnsRecord;
+import com.example.gdg.domain.provider.cloudflare.dto.req.CloudflareDnsReq;
+import com.example.gdg.domain.provider.cloudflare.dto.res.CloudflareDnsRes;
+import com.example.gdg.domain.dns.entity.DnsRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -74,3 +74,6 @@ public class CloudflareApiService {
                 .toBodilessEntity();
     }
 }
+
+
+

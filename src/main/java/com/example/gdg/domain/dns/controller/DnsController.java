@@ -1,7 +1,7 @@
-package com.example.gdg.controller;
+package com.example.gdg.domain.dns.controller;
 
-import com.example.gdg.dto.req.DnsRecordReq;
-import com.example.gdg.service.DnsService;
+import com.example.gdg.domain.dns.dto.req.DnsRecordReq;
+import com.example.gdg.domain.dns.service.DnsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -41,3 +41,5 @@ public class DnsController {
         return ResponseEntity.ok().build();
     }
 }
+
+

@@ -1,4 +1,4 @@
-package com.example.gdg.dto.req;
+package com.example.gdg.domain.provider.cloudflare.dto.req;
 
 import lombok.Builder;
 import lombok.Getter;

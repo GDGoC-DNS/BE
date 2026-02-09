@@ -1,4 +1,4 @@
-package com.example.gdg.entity;
+package com.example.gdg.domain.dns.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
