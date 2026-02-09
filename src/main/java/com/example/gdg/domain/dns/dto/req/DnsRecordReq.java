@@ -1,6 +1,6 @@
-package com.example.gdg.dto.req;
+package com.example.gdg.domain.dns.dto.req;
 
-import com.example.gdg.entity.DnsType;
+import com.example.gdg.domain.dns.entity.DnsType;
 import lombok.Data;
 
 @Data
@@ -13,3 +13,5 @@ public class DnsRecordReq {
     private Integer priority;
     private Boolean proxied;
 }
+
+

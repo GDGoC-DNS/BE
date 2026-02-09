@@ -1,4 +1,4 @@
-package com.example.gdg.dto.res;
+package com.example.gdg.domain.provider.cloudflare.dto.res;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
