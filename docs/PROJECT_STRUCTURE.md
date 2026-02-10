@@ -16,7 +16,7 @@ src/main/java/com/example/gdg
    │  ├─ dto
    │  └─ token
    │
-   ├─ account               //회원 관련 도메인
+   ├─ member               //회원 관련 도메인
    │  ├─ entity
    │  ├─ repository
    │  ├─ service
