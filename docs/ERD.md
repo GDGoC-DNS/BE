@@ -41,12 +41,10 @@ dns_record_history
 CREATE TABLE member
 (
     id         BIGINT       NOT NULL AUTO_INCREMENT,
-    login_id   VARCHAR(100)  NOT NULL,
     email      VARCHAR(255)  NOT NULL,
     password   VARCHAR(255)  NOT NULL,
     created_at DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_member_login_id (login_id),
     UNIQUE KEY uk_member_email (email),
     INDEX      idx_member_created_at (created_at)
 ) ENGINE=InnoDB COMMENT='회원';
@@ -119,6 +117,28 @@ CREATE TABLE dns_record_history
     CONSTRAINT fk_dns_record_history_member
         FOREIGN KEY (changed_by) REFERENCES member (id)
 ) ENGINE=InnoDB COMMENT='DNS 레코드 변경 이력(감사 로그)';
+```
+
+# Refresh Token DDL
+```sql
+CREATE TABLE refresh_token
+(
+    id                   BIGINT       NOT NULL AUTO_INCREMENT,
+    member_id            BIGINT       NOT NULL,
+    token_id             VARCHAR(64)  NOT NULL,
+    token_hash           VARCHAR(255) NOT NULL,
+    revoked              BOOLEAN      NOT NULL DEFAULT FALSE,
+    expires_at           DATETIME     NOT NULL,
+    replaced_by_token_id VARCHAR(64)  NULL,
+    revoked_at           DATETIME     NULL,
+    created_at           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_refresh_token_token_id (token_id),
+    INDEX      idx_refresh_token_member_id (member_id),
+    INDEX      idx_refresh_token_expires_at (expires_at),
+    CONSTRAINT fk_refresh_token_member
+        FOREIGN KEY (member_id) REFERENCES member (id)
+) ENGINE=InnoDB COMMENT='Refresh token storage';
 ```
 
 # Enum 정의
