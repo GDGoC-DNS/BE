@@ -52,25 +52,28 @@ jobs:
         username: ubuntu                  
         key: ${{ secrets.EC2_SSH_KEY }}    
         script: |
-          # 1. AWS ECR 로그인 (토큰 갱신)
+          # 1. 로그인 & 이미지 받기
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com
-          
-          # 2. 최신 이미지 받기
           docker pull 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
-          # 3. 기존 컨테이너 멈추고 삭제 (에러 무시)
+          # 2. 기존 백엔드 컨테이너 삭제
           docker stop my-server || true
           docker rm my-server || true
           
+          # 3. (중요) 혹시 80번 포트 쓰고 있는 다른 녀석(Vite 등) 강제 종료
+          # (이거 안 하면 포트 충돌나서 배포 실패할 수 있음)
+          fuser -k 80/tcp || true
+          
           # 4. 새 컨테이너 실행
-          docker run -d -p 8080:8080 \
+          docker run -d -p 80:8080 \
             -e SPRING_DATASOURCE_URL='${{ secrets.DB_URL }}' \
             -e SPRING_DATASOURCE_USERNAME='${{ secrets.DB_USERNAME }}' \
             -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
             -e CLOUDFLARE_API_TOKEN='${{ secrets.CLOUDFLARE_API_TOKEN }}' \
             -e CLOUDFLARE_ZONE_ID='${{ secrets.CLOUDFLARE_ZONE_ID }}' \
             -e CLOUDFLARE_BASE_URL='https://api.cloudflare.com/client/v4' \
+            -e SERVER_FORWARD_HEADERS_STRATEGY='native' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
-          # 5. 안 쓰는 구버전 이미지 정리 (용량 절약)
+          # 5. 정리
           docker image prune -f
