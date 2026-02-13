@@ -60,8 +60,7 @@ jobs:
           docker stop my-server || true
           docker rm my-server || true
           
-          # 3. (중요) 혹시 80번 포트 쓰고 있는 다른 녀석(Vite 등) 강제 종료
-          # (이거 안 하면 포트 충돌나서 배포 실패할 수 있음)
+          # 3. 혹시 80번 포트 쓰고 있는 다른 녀석 강제 종료
           fuser -k 80/tcp || true
           
           # 4. 새 컨테이너 실행
@@ -73,6 +72,7 @@ jobs:
             -e CLOUDFLARE_ZONE_ID='${{ secrets.CLOUDFLARE_ZONE_ID }}' \
             -e CLOUDFLARE_BASE_URL='https://api.cloudflare.com/client/v4' \
             -e SERVER_FORWARD_HEADERS_STRATEGY='native' \
+            -e SERVER_TOMCAT_REMOTEIP_INTERNAL_PROXIES='.*' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
           # 5. 정리
