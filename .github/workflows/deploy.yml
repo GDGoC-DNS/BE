@@ -57,13 +57,16 @@ jobs:
           docker rm my-server || true
           
           # 3. 80번 포트 강제 점유 해제
-          fuser -k 80/tcp || true
+          sudo fuser -k 80/tcp || true
           
-          # 4. 새 컨테이너 실행
+          # 4. 새 컨테이너 실행 
           docker run -d -p 80:8080 \
             -e SPRING_DATASOURCE_URL='${{ secrets.DB_URL }}' \
             -e SPRING_DATASOURCE_USERNAME='${{ secrets.DB_USERNAME }}' \
             -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+            -e CLOUDFLARE_API_TOKEN='${{ secrets.CLOUDFLARE_API_TOKEN }}' \
+            -e CLOUDFLARE_ZONE_ID='${{ secrets.CLOUDFLARE_ZONE_ID }}' \
+            -e CLOUDFLARE_BASE_URL='https://api.cloudflare.com/client/v4' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
           # 5. 미사용 이미지 정리
