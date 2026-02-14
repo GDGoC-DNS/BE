@@ -68,6 +68,7 @@ jobs:
             -e SERVER_TOMCAT_REMOTEIP_PROTOCOLHEADER=X-Forwarded-Proto \
             -e SERVER_TOMCAT_REMOTEIP_REMOTEIPHEADER=X-Forwarded-For \
             -e SERVER_TOMCAT_REMOTEIP_INTERNALPROXIES='.*' \
+            -e SERVER_ALLOWEDHOSTS='api.gdgoc.com,localhost' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
           # 4. 미사용 이미지 정리
