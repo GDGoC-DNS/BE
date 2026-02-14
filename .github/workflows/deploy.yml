@@ -56,11 +56,8 @@ jobs:
           docker stop my-server || true
           docker rm my-server || true
           
-          # 3. 80번 포트 강제 점유 해제
-          sudo fuser -k 80/tcp || true
-          
-          # 4. 새 컨테이너 실행
-          docker run -d -p 80:8080 \
+          # 3. 새 컨테이너 실행
+          docker run -d -p 8080:8080 \
             -e SPRING_DATASOURCE_URL='${{ secrets.DB_URL }}' \
             -e SPRING_DATASOURCE_USERNAME='${{ secrets.DB_USERNAME }}' \
             -e SPRING_DATASOURCE_PASSWORD='${{ secrets.DB_PASSWORD }}' \
@@ -73,5 +70,5 @@ jobs:
             -e SERVER_TOMCAT_REMOTEIP_INTERNALPROXIES='.*' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
-          # 5. 미사용 이미지 정리
+          # 4. 미사용 이미지 정리
           docker image prune -f
