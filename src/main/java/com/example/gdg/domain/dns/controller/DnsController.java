@@ -3,6 +3,7 @@ package com.example.gdg.domain.dns.controller;
 import com.example.gdg.domain.dns.dto.req.DnsRecordReq;
 import com.example.gdg.domain.dns.service.DnsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/dns")
 @RequiredArgsConstructor
 @Tag(name = "DNS Management", description = "DNS 레코드 관리 API")
+@SecurityRequirement(name = "bearerAuth")
 public class DnsController {
 
     private final DnsService dnsService;
