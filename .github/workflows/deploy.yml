@@ -67,10 +67,10 @@ jobs:
             -e CLOUDFLARE_API_TOKEN='${{ secrets.CLOUDFLARE_API_TOKEN }}' \
             -e CLOUDFLARE_ZONE_ID='${{ secrets.CLOUDFLARE_ZONE_ID }}' \
             -e CLOUDFLARE_BASE_URL='https://api.cloudflare.com/client/v4' \
-            -e SERVER_FORWARD_HEADERS_STRATEGY=native \
-            -e SERVER_TOMCAT_REMOTEIP_PROTOCOL_HEADER=X-Forwarded-Proto \
-            -e SERVER_TOMCAT_REMOTEIP_REMOTE_IP_HEADER=X-Forwarded-For \
-            -e SERVER_TOMCAT_REMOTEIP_INTERNAL_PROXIES='.*' \
+            -e SERVER_FORWARDHEADERSSTRATEGY=native \
+            -e SERVER_TOMCAT_REMOTEIP_PROTOCOLHEADER=X-Forwarded-Proto \
+            -e SERVER_TOMCAT_REMOTEIP_REMOTEIPHEADER=X-Forwarded-For \
+            -e SERVER_TOMCAT_REMOTEIP_INTERNALPROXIES='.*' \
             --name my-server 365202715959.dkr.ecr.ap-northeast-2.amazonaws.com/hufs-dns-server:latest
           
           # 5. 미사용 이미지 정리
