@@ -1,8 +1,9 @@
 ﻿---
-name: "Feature Proposal / Enhancement (Legacy)"
-about: "Suggest a new feature or improvement"
+name: Feature Request
+about: 새로운 기능을 제안하려면 이 템플릿을 사용해주세요
 title: "[FEAT] "
-labels: "feat"
+labels: enhancement
+assignees: ''
 ---
 
 ## 기능 요약
