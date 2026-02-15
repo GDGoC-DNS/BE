@@ -1,4 +1,4 @@
-﻿---
+---
 name: Task
 about: 일반적인 작업이나 개선사항에 대한 이슈
 title: "[TASK] "

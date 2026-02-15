@@ -1,4 +1,4 @@
-﻿---
+---
 name: Docs
 about: 문서 수정에 대한 이슈
 title: "[DOCS] "

@@ -1,4 +1,4 @@
-﻿---
+---
 name: Feature Request
 about: 새로운 기능을 제안하려면 이 템플릿을 사용해주세요
 title: "[FEAT] "
