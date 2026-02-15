@@ -1,4 +1,4 @@
-name: Deploy to ECR and EC2
+﻿name: Deploy to ECR and EC2
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     - name: JDK 17 설치
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
 
     - name: gradlew 실행 권한 부여
@@ -64,7 +64,7 @@ jobs:
             -e CLOUDFLARE_API_TOKEN='${{ secrets.CLOUDFLARE_API_TOKEN }}' \
             -e CLOUDFLARE_ZONE_ID='${{ secrets.CLOUDFLARE_ZONE_ID }}' \
             -e CLOUDFLARE_BASE_URL='https://api.cloudflare.com/client/v4' \
-            -e SERVER_FORWARDHEADERSSTRATEGY=native \
+            -e SERVER_FORWARD_HEADERS_STRATEGY=native \
             -e SERVER_TOMCAT_REMOTEIP_PROTOCOLHEADER=X-Forwarded-Proto \
             -e SERVER_TOMCAT_REMOTEIP_REMOTEIPHEADER=X-Forwarded-For \
             -e SERVER_TOMCAT_REMOTEIP_INTERNALPROXIES='.*' \
@@ -73,3 +73,4 @@ jobs:
           
           # 4. 미사용 이미지 정리
           docker image prune -f
+
