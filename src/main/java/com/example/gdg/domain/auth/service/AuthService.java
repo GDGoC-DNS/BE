@@ -3,6 +3,7 @@ package com.example.gdg.domain.auth.service;
 import com.example.gdg.domain.auth.dto.req.LoginReq;
 import com.example.gdg.domain.auth.dto.req.ReissueReq;
 import com.example.gdg.domain.auth.dto.req.SignUpReq;
+import com.example.gdg.domain.auth.dto.req.ChangePasswordReq;
 import com.example.gdg.domain.auth.dto.res.AuthTokenRes;
 import com.example.gdg.domain.auth.repository.AuthMemberRepository;
 import com.example.gdg.domain.auth.token.AuthTokenService;
@@ -61,6 +62,19 @@ public class AuthService {
         return authTokenService.reissue(request.getRefreshToken());
     }
 
+    public void changePassword(Long memberId, ChangePasswordReq request) {
+        validateChangePasswordRequest(request);
+
+        Member member = authMemberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("Current password does not match.");
+        }
+
+        member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
     private void validateSignUpRequest(SignUpReq request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("email is required.");
@@ -79,6 +93,15 @@ public class AuthService {
         }
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("email is required.");
+        }
+    }
+
+    private void validateChangePasswordRequest(ChangePasswordReq request) {
+        if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
+            throw new IllegalArgumentException("currentPassword is required.");
+        }
+        if (request.getNewPassword() == null || request.getNewPassword().isBlank()) {
+            throw new IllegalArgumentException("newPassword is required.");
         }
     }
 }
