@@ -1,0 +1,22 @@
+﻿spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/my_project_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${SPRING_DATASOURCE_USERNAME:GDG}
+    password: ${SPRING_DATASOURCE_PASSWORD:gdg123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+cloudflare:
+  api-token: ${CLOUDFLARE_API_TOKEN:dummy}
+  zone-id: ${CLOUDFLARE_ZONE_ID:dummy}
+  base-url: ${CLOUDFLARE_BASE_URL:https://api.cloudflare.com/client/v4}
+
