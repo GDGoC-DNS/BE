@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         String message = e.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(fieldError -> fieldError.getDefaultMessage())
-                .orElse("Invalid request.");
+                .orElse("잘못된 요청입니다.");
 
         return ResponseEntity.badRequest().body(
                 ErrorResponse.builder()
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .code("INTERNAL_SERVER_ERROR")
-                        .message("Unexpected server error.")
+                        .message("예기치 못한 서버 오류가 발생했습니다.")
                         .path(request.getRequestURI())
                         .build()
         );

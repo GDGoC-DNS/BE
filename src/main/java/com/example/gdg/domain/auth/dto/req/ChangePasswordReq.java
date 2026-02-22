@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangePasswordReq {
 
-    @NotBlank(message = "currentPassword is required.")
+    @NotBlank(message = "현재 비밀번호는 필수입니다.")
     private String currentPassword;
 
-    @NotBlank(message = "newPassword is required.")
+    @NotBlank(message = "새 비밀번호는 필수입니다.")
     private String newPassword;
 }

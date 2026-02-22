@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReissueReq {
 
-    @NotBlank(message = "refreshToken is required.")
+    @NotBlank(message = "리프레시 토큰은 필수입니다.")
     private String refreshToken;
 }

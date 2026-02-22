@@ -30,7 +30,7 @@ public class AuthService {
         validateSignUpRequest(request);
 
         if (authMemberRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("email already exists.");
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
         Member member = Member.builder()
@@ -46,10 +46,10 @@ public class AuthService {
         validateLoginRequest(request);
 
         Member member = authMemberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
+                .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials.");
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
         return authTokenService.createTokenPair(member.getId(), member.getEmail());
@@ -57,7 +57,7 @@ public class AuthService {
 
     public AuthTokenRes reissue(ReissueReq request) {
         if (request.getRefreshToken() == null || request.getRefreshToken().isBlank()) {
-            throw new IllegalArgumentException("refreshToken is required.");
+            throw new IllegalArgumentException("리프레시 토큰은 필수입니다.");
         }
         return authTokenService.reissue(request.getRefreshToken());
     }
@@ -66,10 +66,10 @@ public class AuthService {
         validateChangePasswordRequest(request);
 
         Member member = authMemberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found."));
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("Current password does not match.");
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
 
         member.changePassword(passwordEncoder.encode(request.getNewPassword()));
@@ -77,31 +77,31 @@ public class AuthService {
 
     private void validateSignUpRequest(SignUpReq request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
-            throw new IllegalArgumentException("email is required.");
+            throw new IllegalArgumentException("이메일은 필수입니다.");
         }
         if (!EMAIL_PATTERN.matcher(request.getEmail()).matches()) {
-            throw new IllegalArgumentException("Invalid email format.");
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
         if (request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new IllegalArgumentException("password is required.");
+            throw new IllegalArgumentException("비밀번호는 필수입니다.");
         }
     }
 
     private void validateLoginRequest(LoginReq request) {
         if (request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new IllegalArgumentException("password is required.");
+            throw new IllegalArgumentException("비밀번호는 필수입니다.");
         }
         if (request.getEmail() == null || request.getEmail().isBlank()) {
-            throw new IllegalArgumentException("email is required.");
+            throw new IllegalArgumentException("이메일은 필수입니다.");
         }
     }
 
     private void validateChangePasswordRequest(ChangePasswordReq request) {
         if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()) {
-            throw new IllegalArgumentException("currentPassword is required.");
+            throw new IllegalArgumentException("현재 비밀번호는 필수입니다.");
         }
         if (request.getNewPassword() == null || request.getNewPassword().isBlank()) {
-            throw new IllegalArgumentException("newPassword is required.");
+            throw new IllegalArgumentException("새 비밀번호는 필수입니다.");
         }
     }
 }
