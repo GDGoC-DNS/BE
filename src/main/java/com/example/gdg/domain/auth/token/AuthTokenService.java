@@ -12,7 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -48,7 +52,7 @@ public class AuthTokenService {
         if (savedToken.isExpired(LocalDateTime.now())) {
             throw new UnauthorizedException("Refresh token is expired.");
         }
-        if (!passwordEncoder.matches(refreshToken, savedToken.getTokenHash())) {
+        if (!matchesToken(refreshToken, savedToken.getTokenHash())) {
             throw new UnauthorizedException("Invalid refresh token.");
         }
 
@@ -62,7 +66,7 @@ public class AuthTokenService {
         RefreshToken rotatedToken = RefreshToken.builder()
                 .memberId(memberId)
                 .tokenId(newTokenId)
-                .tokenHash(passwordEncoder.encode(newRefreshToken))
+                .tokenHash(hashToken(newRefreshToken))
                 .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenValiditySeconds))
                 .build();
         refreshTokenRepository.save(rotatedToken);
@@ -95,7 +99,7 @@ public class AuthTokenService {
         RefreshToken savedToken = RefreshToken.builder()
                 .memberId(memberId)
                 .tokenId(tokenId)
-                .tokenHash(passwordEncoder.encode(refreshToken))
+                .tokenHash(hashToken(refreshToken))
                 .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenValiditySeconds))
                 .build();
         refreshTokenRepository.save(savedToken);
@@ -109,5 +113,26 @@ public class AuthTokenService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    private boolean matchesToken(String rawToken, String storedHash) {
+        // Backward compatibility for previously issued BCrypt-hashed refresh tokens.
+        if (storedHash != null && storedHash.startsWith("$2")) {
+            return passwordEncoder.matches(rawToken, storedHash);
+        }
+        return MessageDigest.isEqual(
+                hashToken(rawToken).getBytes(StandardCharsets.UTF_8),
+                storedHash.getBytes(StandardCharsets.UTF_8)
+        );
+    }
+
+    private String hashToken(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashed = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hashed);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to initialize token hash algorithm.", e);
+        }
     }
 }
