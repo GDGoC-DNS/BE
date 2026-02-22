@@ -44,16 +44,16 @@ public class AuthTokenService {
         String tokenId = claims.get("tokenId", String.class);
 
         RefreshToken savedToken = refreshTokenRepository.findByTokenIdAndMemberId(tokenId, memberId)
-                .orElseThrow(() -> new UnauthorizedException("Invalid refresh token."));
+                .orElseThrow(() -> new UnauthorizedException("유효하지 않은 리프레시 토큰입니다."));
 
         if (Boolean.TRUE.equals(savedToken.getRevoked())) {
-            throw new UnauthorizedException("Refresh token is revoked.");
+            throw new UnauthorizedException("이미 폐기된 리프레시 토큰입니다.");
         }
         if (savedToken.isExpired(LocalDateTime.now())) {
-            throw new UnauthorizedException("Refresh token is expired.");
+            throw new UnauthorizedException("만료된 리프레시 토큰입니다.");
         }
         if (!matchesToken(refreshToken, savedToken.getTokenHash())) {
-            throw new UnauthorizedException("Invalid refresh token.");
+            throw new UnauthorizedException("유효하지 않은 리프레시 토큰입니다.");
         }
 
         String accessToken = jwtTokenProvider.generateAccessToken(memberId, email);
@@ -79,16 +79,16 @@ public class AuthTokenService {
             Claims claims = jwtTokenProvider.parseClaims(refreshToken);
             String tokenType = claims.get("tokenType", String.class);
             if (!"REFRESH".equals(tokenType)) {
-                throw new UnauthorizedException("Invalid refresh token type.");
+                throw new UnauthorizedException("리프레시 토큰 타입이 올바르지 않습니다.");
             }
             if (claims.get("tokenId", String.class) == null || claims.get("tokenId", String.class).isBlank()) {
-                throw new UnauthorizedException("Invalid refresh token.");
+                throw new UnauthorizedException("유효하지 않은 리프레시 토큰입니다.");
             }
             return claims;
         } catch (UnauthorizedException e) {
             throw e;
         } catch (Exception e) {
-            throw new UnauthorizedException("Invalid refresh token.");
+            throw new UnauthorizedException("유효하지 않은 리프레시 토큰입니다.");
         }
     }
 
@@ -132,7 +132,7 @@ public class AuthTokenService {
             byte[] hashed = digest.digest(token.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hashed);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Failed to initialize token hash algorithm.", e);
+            throw new IllegalStateException("토큰 해시 알고리즘 초기화에 실패했습니다.", e);
         }
     }
 }

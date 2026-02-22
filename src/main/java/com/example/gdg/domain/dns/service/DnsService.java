@@ -50,7 +50,7 @@ public class DnsService {
     // 수정
     public void updateDnsRecord(Long recordId, DnsRecordReq request, Long memberId) {
         DnsRecord dnsRecord = dnsRecordRepository.findById(recordId)
-                .orElseThrow(() -> new IllegalArgumentException("Record not found"));
+                .orElseThrow(() -> new IllegalArgumentException("레코드를 찾을 수 없습니다."));
 
         String oldJson = toJson(dnsRecord);
 
@@ -69,7 +69,7 @@ public class DnsService {
     // 삭제
     public void deleteDnsRecord(Long recordId, Long memberId) {
         DnsRecord dnsRecord = dnsRecordRepository.findById(recordId)
-                .orElseThrow(() -> new IllegalArgumentException("Record not found"));
+                .orElseThrow(() -> new IllegalArgumentException("레코드를 찾을 수 없습니다."));
 
         String oldJson = toJson(dnsRecord);
 

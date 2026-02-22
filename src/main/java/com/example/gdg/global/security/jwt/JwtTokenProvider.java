@@ -88,7 +88,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(token);
         String tokenType = claims.get("tokenType", String.class);
         if (!"ACCESS".equals(tokenType)) {
-            throw new IllegalArgumentException("Invalid token type.");
+            throw new IllegalArgumentException("토큰 타입이 올바르지 않습니다.");
         }
 
         String memberId = claims.getSubject();

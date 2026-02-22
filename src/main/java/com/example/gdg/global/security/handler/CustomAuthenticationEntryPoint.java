@@ -39,7 +39,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .code("AUTH_REQUIRED")
-                .message("Authentication is required.")
+                .message("인증이 필요합니다.")
                 .path(request.getRequestURI())
                 .build();
 
