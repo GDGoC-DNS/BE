@@ -5,7 +5,9 @@ import com.example.gdg.domain.audit.entity.DnsRecordHistory;
 import com.example.gdg.domain.audit.repository.DnsRecordHistoryRepository;
 import com.example.gdg.domain.dns.dto.req.DnsRecordReq;
 import com.example.gdg.domain.dns.entity.DnsRecord;
+import com.example.gdg.domain.dns.entity.Domain;
 import com.example.gdg.domain.dns.repository.DnsRecordRepository;
+import com.example.gdg.domain.dns.repository.DomainRepository;
 import com.example.gdg.domain.provider.cloudflare.client.CloudflareApiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +21,13 @@ public class DnsService {
 
     private final DnsRecordRepository dnsRecordRepository;
     private final DnsRecordHistoryRepository historyRepository;
+    private final DomainRepository domainRepository;
     private final CloudflareApiService cloudflareApiService;
     private final ObjectMapper objectMapper;
 
-    // 생성
     public Long createDnsRecord(DnsRecordReq request, Long memberId) {
+        validateDomainOwnership(request.getDomainId(), memberId);
+
         DnsRecord dnsRecord = DnsRecord.builder()
                 .domainId(request.getDomainId())
                 .type(request.getType())
@@ -34,63 +38,51 @@ public class DnsService {
                 .proxied(request.getProxied())
                 .build();
 
-        // 1. Cloudflare 호출
         String cloudflareId = cloudflareApiService.createRecord(dnsRecord);
         dnsRecord.updateCloudflareId(cloudflareId);
-
-        // 2. DB 저장
         DnsRecord savedRecord = dnsRecordRepository.save(dnsRecord);
-
-        // 3. 히스토리
         saveHistory(savedRecord, ActionType.CREATE, null, savedRecord, memberId);
 
         return savedRecord.getId();
     }
 
-    // 수정
     public void updateDnsRecord(Long recordId, DnsRecordReq request, Long memberId) {
         DnsRecord dnsRecord = dnsRecordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("레코드를 찾을 수 없습니다."));
 
+        validateDomainOwnership(dnsRecord.getDomainId(), memberId);
         String oldJson = toJson(dnsRecord);
 
         dnsRecord.update(request.getHost(), request.getValue(), request.getTtl(),
                 request.getPriority(), request.getProxied(), request.getType());
 
-        // 1. Cloudflare 호출
         if (dnsRecord.getCloudflareId() != null) {
             cloudflareApiService.updateRecord(dnsRecord.getCloudflareId(), dnsRecord);
         }
-
-        // 2. 히스토리 (트랜잭션 커밋 시 DB 업데이트 됨)
         saveHistory(dnsRecord, ActionType.UPDATE, oldJson, dnsRecord, memberId);
     }
 
-    // 삭제
     public void deleteDnsRecord(Long recordId, Long memberId) {
         DnsRecord dnsRecord = dnsRecordRepository.findById(recordId)
                 .orElseThrow(() -> new IllegalArgumentException("레코드를 찾을 수 없습니다."));
 
+        validateDomainOwnership(dnsRecord.getDomainId(), memberId);
         String oldJson = toJson(dnsRecord);
 
-        // 1. Cloudflare 호출
         if (dnsRecord.getCloudflareId() != null) {
             cloudflareApiService.deleteRecord(dnsRecord.getCloudflareId());
         }
-
-        // 2. DB 삭제
         dnsRecordRepository.delete(dnsRecord);
+        saveHistory(dnsRecord, ActionType.DELETE, oldJson, null, memberId);
+    }
 
-        // 3. 히스토리
-        DnsRecordHistory history = DnsRecordHistory.builder()
-                .recordId(dnsRecord.getId())
-                .domainId(dnsRecord.getDomainId())
-                .action(ActionType.DELETE)
-                .oldValue(oldJson)
-                .newValue(null)
-                .changedBy(memberId)
-                .build();
-        historyRepository.save(history);
+    private void validateDomainOwnership(Long domainId, Long memberId) {
+        Domain domain = domainRepository.findById(domainId)
+                .orElseThrow(() -> new IllegalArgumentException("도메인을 찾을 수 없습니다."));
+
+        if (!domain.getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("해당 도메인에 대한 권한이 없습니다.");
+        }
     }
 
     private void saveHistory(DnsRecord record, ActionType action, String oldJson, DnsRecord newRecordState, Long memberId) {
