@@ -1,4 +1,4 @@
-﻿spring:
+spring:
   config:
     activate:
       on-profile: local
@@ -19,4 +19,3 @@ cloudflare:
   api-token: ${CLOUDFLARE_API_TOKEN:dummy}
   zone-id: ${CLOUDFLARE_ZONE_ID:dummy}
   base-url: ${CLOUDFLARE_BASE_URL:https://api.cloudflare.com/client/v4}
-

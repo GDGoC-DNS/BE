@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,46 +25,54 @@ public class CloudflareApiService {
 
     private final RestClient restClient = RestClient.create();
 
-    public String createRecord(DnsRecord record) {
+    public String createRecord(String recordName, DnsRecord record) {
         CloudflareDnsReq requestBody = CloudflareDnsReq.builder()
                 .type(record.getType().name())
-                .name(record.getHost())
+                .name(recordName)
                 .content(record.getValue())
                 .ttl(record.getTtl())
                 .proxied(record.getProxied())
                 .comment("Created by GDG Project")
                 .build();
 
-        CloudflareDnsRes response = restClient.post()
-                .uri(baseUrl + "/zones/" + zoneId + "/dns_records")
-                .header("Authorization", "Bearer " + apiToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(requestBody)
-                .retrieve()
-                .body(CloudflareDnsRes.class);
+        try {
+            CloudflareDnsRes response = restClient.post()
+                    .uri(baseUrl + "/zones/" + zoneId + "/dns_records")
+                    .header("Authorization", "Bearer " + apiToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .body(CloudflareDnsRes.class);
 
-        if (response != null && response.isSuccess()) {
-            return response.getResult().getId();
+            if (response != null && response.isSuccess()) {
+                return response.getResult().getId();
+            }
+            throw new RuntimeException("Cloudflare API Create Failed");
+        } catch (RestClientResponseException e) {
+            throw new IllegalArgumentException("Cloudflare가 DNS 레코드 생성을 거부했습니다.");
         }
-        throw new RuntimeException("Cloudflare API Create Failed");
     }
 
-    public void updateRecord(String cloudflareId, DnsRecord record) {
+    public void updateRecord(String recordName, String cloudflareId, DnsRecord record) {
         CloudflareDnsReq requestBody = CloudflareDnsReq.builder()
                 .type(record.getType().name())
-                .name(record.getHost())
+                .name(recordName)
                 .content(record.getValue())
                 .ttl(record.getTtl())
                 .proxied(record.getProxied())
                 .build();
 
-        restClient.put()
-                .uri(baseUrl + "/zones/" + zoneId + "/dns_records/" + cloudflareId)
-                .header("Authorization", "Bearer " + apiToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(requestBody)
-                .retrieve()
-                .toBodilessEntity();
+        try {
+            restClient.put()
+                    .uri(baseUrl + "/zones/" + zoneId + "/dns_records/" + cloudflareId)
+                    .header("Authorization", "Bearer " + apiToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(requestBody)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            throw new IllegalArgumentException("Cloudflare가 DNS 레코드 수정을 거부했습니다.");
+        }
     }
 
     public void deleteRecord(String cloudflareId) {
@@ -74,6 +83,5 @@ public class CloudflareApiService {
                 .toBodilessEntity();
     }
 }
-
 
 

@@ -5,6 +5,7 @@ import com.example.gdg.domain.auth.dto.req.LoginReq;
 import com.example.gdg.domain.auth.dto.req.ReissueReq;
 import com.example.gdg.domain.auth.dto.req.SignUpReq;
 import com.example.gdg.domain.auth.dto.res.AuthTokenRes;
+import com.example.gdg.domain.auth.dto.res.MyInfoRes;
 import com.example.gdg.domain.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,11 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+
+    @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "내 정보 확인 API", description = "현재 로그인한 사용자의 이메일 정보를 반환합니다.")
+    public ResponseEntity<MyInfoRes> me(Authentication authentication) {
+        return ResponseEntity.ok(authService.getMyInfo(Long.parseLong(authentication.getName())));
+    }
 
     @PostMapping("/signup")
     @Operation(

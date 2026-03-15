@@ -5,6 +5,7 @@ import com.example.gdg.domain.auth.dto.req.ReissueReq;
 import com.example.gdg.domain.auth.dto.req.SignUpReq;
 import com.example.gdg.domain.auth.dto.req.ChangePasswordReq;
 import com.example.gdg.domain.auth.dto.res.AuthTokenRes;
+import com.example.gdg.domain.auth.dto.res.MyInfoRes;
 import com.example.gdg.domain.auth.repository.AuthMemberRepository;
 import com.example.gdg.domain.auth.token.AuthTokenService;
 import com.example.gdg.domain.member.entity.Member;
@@ -60,6 +61,16 @@ public class AuthService {
             throw new IllegalArgumentException("리프레시 토큰은 필수입니다.");
         }
         return authTokenService.reissue(request.getRefreshToken());
+    }
+
+    @Transactional(readOnly = true)
+    public MyInfoRes getMyInfo(Long memberId) {
+        Member member = authMemberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        return MyInfoRes.builder()
+                .email(member.getEmail())
+                .build();
     }
 
     public void changePassword(Long memberId, ChangePasswordReq request) {
